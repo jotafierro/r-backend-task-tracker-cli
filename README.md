@@ -4,10 +4,6 @@ This project solves the challenge https://roadmap.sh/projects/task-tracker
 
 > My goal is to do this using as few external libraries as possible.
 
-# Requirements
-
-The node version `^20.x.x`
-
 # Install
 
 Clone the project and run the following:
