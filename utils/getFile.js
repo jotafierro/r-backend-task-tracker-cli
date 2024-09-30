@@ -15,5 +15,5 @@ export const getFile = (file) => new Promise(
     }
 
     resolve(JSON.parse(data))
-  }
-))
+  }),
+)

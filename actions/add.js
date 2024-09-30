@@ -5,10 +5,10 @@ export const add = ({
   restArgv,
 }) => async () => {
   const todos = await getFile('todo.json')
-  const [description] = restArgv
+  const [ description ] = restArgv
 
   if (!description) {
-    console.log('Please provide a description for the todo')
+    console.log('Please, enter the task description')
 
     return
   }
@@ -21,8 +21,5 @@ export const add = ({
     updatedAt: null,
   })
 
-  await updateFile(
-    'todo.json',
-    JSON.stringify(todos, null, 2)
-  )
+  await updateFile('todo.json', todos)
 }

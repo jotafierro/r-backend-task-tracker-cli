@@ -21,6 +21,8 @@ export default [
       'no-unused-vars': 'error',
       'no-console': 'off',
       'comma-dangle': ['error', 'always-multiline'],
+      'object-curly-spacing': ['error', 'always'],
+      'array-bracket-spacing': ["error", "always"]
     }
   },
 ]
