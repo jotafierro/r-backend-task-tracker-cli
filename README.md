@@ -21,3 +21,19 @@ To run the help
 ```
 task-tracker-cli help
 ```
+
+add new task
+
+````
+task-tracker-cli add "description task"
+```
+
+list all task
+
+```
+task-tracker-cli list
+# filter by status
+task-tracker-cli list todo
+task-tracker-cli list in-progress
+task-tracker-cli list done
+```

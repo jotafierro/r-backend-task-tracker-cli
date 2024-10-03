@@ -8,10 +8,9 @@ describe('add', () => {
       getFile,
       updateFile,
       STATUS: { TODO: 'todo' },
-      restArgv: [ 'text mock' ],
     })
 
-    await createTask()
+    await createTask({ restArgv: [ 'text mock' ] })
 
     expect(getFile).toHaveBeenCalledWith('todo.json')
     expect(updateFile).toHaveBeenCalledWith(
@@ -33,10 +32,9 @@ describe('add', () => {
       getFile,
       updateFile,
       STATUS: { TODO: 'todo' },
-      restArgv: [],
     })
 
-    await createTask()
+    await createTask({ restArgv: [] })
 
     expect(getFile).toHaveBeenCalledWith('todo.json')
     expect(updateFile).not.toHaveBeenCalled()

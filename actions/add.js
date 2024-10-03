@@ -2,8 +2,7 @@ export const add = ({
   getFile,
   updateFile,
   STATUS,
-  restArgv,
-}) => async () => {
+}) => async ({ restArgv }) => {
   const todos = await getFile('todo.json')
   const [ description ] = restArgv
 
