@@ -15,16 +15,15 @@ describe('updateFile', () => {
     } ]
 
 
-    jest.spyOn(fs, 'writeFile').mockImplementation(
-      (path, data, callback) => callback(null),
+    jest.spyOn(fs, 'writeFileSync').mockImplementation(
+      () => Promise.resolve(),
     )
 
     await updateFile(mockFile, mockData)
 
-    expect(fs.writeFile).toBeCalledWith(
+    expect(fs.writeFileSync).toBeCalledWith(
       mockFile,
       JSON.stringify(mockData, null, 2),
-      expect.any(Function),
     )
   })
 
@@ -36,8 +35,8 @@ describe('updateFile', () => {
       status: 'todo',
     } ]
 
-    jest.spyOn(fs, 'writeFile').mockImplementation(
-      (path, data, callback) => callback(new Error('Test error')),
+    jest.spyOn(fs, 'writeFileSync').mockImplementation(
+      () => Promise.reject(new Error('Test error')),
     )
 
     await expect(updateFile(mockFile, mockData)).rejects.toThrow('Test error')

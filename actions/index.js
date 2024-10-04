@@ -1,2 +1,6 @@
 export * from './add.js'
+export * from './deleteTask.js'
 export * from './list.js'
+export * from './markDone.js'
+export * from './markInProgress.js'
+export * from './update.js'

@@ -2,8 +2,9 @@ export const add = ({
   getFile,
   updateFile,
   STATUS,
+  NAME_FILE,
 }) => async ({ restArgv }) => {
-  const todos = await getFile('todo.json')
+  const todos = await getFile(NAME_FILE)
   const [ description ] = restArgv
 
   if (!description) {
@@ -12,13 +13,16 @@ export const add = ({
     return
   }
 
+  const id = todos.length + 1
   todos.push({
-    id: todos.length + 1,
+    id,
     description,
     status: STATUS.TODO,
     createdAt: new Date(),
     updatedAt: null,
   })
 
-  await updateFile('todo.json', todos)
+  console.log(`Task added successfully (ID: ${id})`)
+
+  await updateFile(NAME_FILE, todos)
 }

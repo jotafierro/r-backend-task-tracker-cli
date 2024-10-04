@@ -1,10 +1,11 @@
 export const list = ({
   getFile,
   STATUS,
+  NAME_FILE,
 }) => async ({ restArgv }) => {
-  let todos = await getFile('todo.json')
+  let todos = await getFile(NAME_FILE)
 
-  if (restArgv?.length > 0) {
+  if (restArgv && restArgv?.length > 0) {
     const availableFilters = Object.values(STATUS)
 
     if (!availableFilters.includes(restArgv[0]))
@@ -17,7 +18,7 @@ export const list = ({
     )
   }
 
-  if (todos.length === 0) {
+  if (todos?.length === 0) {
     console.log('Empty tasks!')
 
     return

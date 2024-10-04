@@ -14,8 +14,8 @@ describe('getFile', () => {
       status: 'todo',
     } ]
 
-    jest.spyOn(fs, 'readFile').mockImplementation(
-      (path, callback) => callback(null, JSON.stringify(mockData)),
+    jest.spyOn(fs, 'readFileSync').mockImplementation(
+      () => Promise.resolve(JSON.stringify(mockData)),
     )
 
     const result = await getFile(mockFile)
@@ -31,12 +31,12 @@ describe('getFile', () => {
       updateFile: () => 'mocked message',
     }))
 
-    jest.spyOn(fs, 'readFile')
+    jest.spyOn(fs, 'readFileSync')
       .mockImplementationOnce(
-        (path, callback) => callback({ code: 'ENOENT' }, null),
+        () => Promise.reject({ code: 'ENOENT' }),
       )
       .mockImplementationOnce(
-        (path, callback) => callback(null, JSON.stringify(mockData)),
+        () => Promise.resolve(JSON.stringify(mockData)),
       )
 
     jest.spyOn(fs, 'writeFile').mockImplementation(
@@ -50,12 +50,11 @@ describe('getFile', () => {
 
   test('get error from readFile', async () => {
     const mockFile = 'todo.json'
-    const mockError = new Error('Error reading file')
-
-    jest.spyOn(fs, 'readFile').mockImplementation(
-      (path, callback) => callback(mockError, null),
+    jest.spyOn(fs, 'readFileSync').mockImplementation(
+      () => Promise.reject(new Error('Error reading file')),
     )
 
-    await expect(getFile(mockFile)).rejects.toThrow(mockError)
+    await expect(getFile(mockFile))
+      .rejects.toThrow(new Error('Error al leer el archivo'))
   })
 })

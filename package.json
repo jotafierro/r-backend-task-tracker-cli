@@ -1,5 +1,5 @@
 {
-  "name": "task-tracker-cli",
+  "name": "task-cli",
   "version": "1.0.0",
   "description": "",
   "type": "module",
@@ -8,7 +8,7 @@
     "eslint": "eslint ."
   },
   "bin": {
-    "task-tracker-cli": "./index.js"
+    "task-cli": "./index.js"
   },
   "keywords": [],
   "author": "",

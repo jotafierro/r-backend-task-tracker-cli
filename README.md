@@ -12,28 +12,28 @@ Clone the project and run the following:
 npm i -g .
 ````
 
-This will globally install the `task-tracker-cli` command.
+This will globally install the `task-cli` command.
 
 # Use
 
-To run the help
-
 ```
-task-tracker-cli help
-```
+# Adding a new task
+task-cli add "Buy groceries"
+# Output: Task added successfully (ID: 1)
 
-add new task
+# Updating and deleting tasks
+task-cli update 1 "Buy groceries and cook dinner"
+task-cli delete 1
 
-````
-task-tracker-cli add "description task"
-```
+# Marking a task as in progress or done
+task-cli mark-in-progress 1
+task-cli mark-done 1
 
-list all task
+# Listing all tasks
+task-cli list
 
-```
-task-tracker-cli list
-# filter by status
-task-tracker-cli list todo
-task-tracker-cli list in-progress
-task-tracker-cli list done
+# Listing tasks by status
+task-cli list done
+task-cli list todo
+task-cli list in-progress
 ```

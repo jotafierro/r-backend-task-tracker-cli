@@ -1,13 +1,6 @@
-import { writeFile } from 'node:fs'
+import { writeFileSync } from 'node:fs'
 
-export const updateFile = (file, data) => new Promise(
-  (resolve, reject) => writeFile(
-    file,
-    JSON.stringify(data, null, 2),
-    (err) => {
-      if (err) reject(err)
-
-      resolve()
-    },
-  ),
+export const updateFile = (file, data) => writeFileSync(
+  file,
+  JSON.stringify(data, null, 2),
 )

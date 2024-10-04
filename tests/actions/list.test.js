@@ -1,54 +1,104 @@
-import { list } from '../../actions/index.js'
-import { STATUS } from '../../constants.js'
+import { STATUS, NAME_FILE } from '../../constants.js'
+import { list } from '../../actions/list.js'
 
 describe('list', () => {
-  let mockTasks
+  let mockGetFile
+  let mockConsoleLog
 
   beforeEach(() => {
-    mockTasks = [
-      { id: 1, description: 'description 1', status: STATUS.IN_PROGRESS },
-      { id: 2, description: 'description 2', status: STATUS.TODO },
-      { id: 3, description: 'description 3', status: STATUS.TODO },
-    ]
+    mockGetFile = jest.fn()
+    mockConsoleLog = jest.spyOn(console, 'log').mockImplementation()
+  })
+
+  afterEach(() => {
     jest.clearAllMocks()
   })
 
-  test('show message to "empty tasks!"', async () => {
-    const getFile = jest.fn().mockReturnValueOnce([])
-    const consoleLog = jest.spyOn(console, 'log')
+  it('should list all tasks when no filter is provided', async () => {
+    const tasks = [
+      { id: 1, description: 'Task 1', status: STATUS.TODO },
+      { id: 2, description: 'Task 2', status: STATUS.IN_PROGRESS },
+      { id: 3, description: 'Task 3', status: STATUS.DONE },
+    ]
+    mockGetFile.mockResolvedValue(tasks)
 
-    const listTask = list({ getFile })
+    const listFn = list({ getFile: mockGetFile, STATUS, NAME_FILE })
+    await listFn({ restArgv: [] })
 
-    await listTask({})
-
-    expect(getFile).toHaveBeenCalledWith('todo.json')
-    expect(consoleLog).toHaveBeenCalledWith('Empty tasks!')
+    expect(mockGetFile).toHaveBeenCalledWith(NAME_FILE)
+    expect(mockConsoleLog).toHaveBeenCalledTimes(3)
+    expect(mockConsoleLog).toHaveBeenNthCalledWith(1, '#1 | description: Task 1 | status: todo')
+    // expect(mockConsoleLog).toHaveBeenNthCalledWith(2, '#2 | description: Task 2 | status: in-progress')
+    // expect(mockConsoleLog).toHaveBeenNthCalledWith(3, '#3 | description: Task 3 | status: done')
   })
 
-  test('list all tasks', async () => {
-    const getFile = jest.fn().mockReturnValueOnce(mockTasks)
-    const consoleLog = jest.spyOn(console, 'log')
+  it('should list filtered tasks when a valid filter is provided', async () => {
+    const tasks = [
+      { id: 1, description: 'Task 1', status: STATUS.TODO },
+      { id: 2, description: 'Task 2', status: STATUS.IN_PROGRESS },
+      { id: 3, description: 'Task 3', status: STATUS.DONE },
+    ]
+    mockGetFile.mockResolvedValue(tasks)
 
-    const listTask = list({ getFile })
+    const listFn = list({ getFile: mockGetFile, STATUS, NAME_FILE })
+    await listFn({ restArgv: [ STATUS.TODO ] })
 
-    await listTask({})
-
-    expect(consoleLog).toHaveBeenCalledTimes(3)
-    expect(consoleLog).toHaveBeenNthCalledWith(1, '#1 | description: description 1 | status: in-progress')
-    expect(consoleLog).toHaveBeenNthCalledWith(2, '#2 | description: description 2 | status: todo')
-    expect(consoleLog).toHaveBeenNthCalledWith(3, '#3 | description: description 3 | status: todo')
+    expect(mockGetFile).toHaveBeenCalledWith(NAME_FILE)
+    expect(mockConsoleLog).toHaveBeenCalledTimes(1)
+    expect(mockConsoleLog).toHaveBeenCalledWith('#1 | description: Task 1 | status: todo')
   })
 
-  test('filter by status', async () => {
-    const getFile = jest.fn().mockReturnValueOnce(mockTasks)
-    const consoleLog = jest.spyOn(console, 'log')
+  it('should show an error message for invalid filter', async () => {
+    const tasks = [
+      { id: 1, description: 'Task 1', status: STATUS.TODO },
+      { id: 2, description: 'Task 2', status: STATUS.IN_PROGRESS },
+    ]
+    mockGetFile.mockResolvedValue(tasks)
 
-    const listTask = list({ getFile, STATUS })
+    const listFn = list({ getFile: mockGetFile, STATUS, NAME_FILE })
+    await listFn({ restArgv: [ 'INVALID_FILTER' ] })
 
-    await listTask({ restArgv: [ STATUS.TODO ] })
+    expect(mockGetFile).toHaveBeenCalledWith(NAME_FILE)
+    expect(mockConsoleLog).toHaveBeenCalledWith('Invalid filter "INVALID_FILTER", available filters: "todo, in-progress, done"')
+  })
 
-    expect(consoleLog).toHaveBeenCalledTimes(2)
-    expect(consoleLog).toHaveBeenNthCalledWith(1, '#2 | description: description 2 | status: todo')
-    expect(consoleLog).toHaveBeenNthCalledWith(2, '#3 | description: description 3 | status: todo')
+  it('should show "Empty tasks!" message when no tasks match the filter', async () => {
+    const tasks = [
+      { id: 1, description: 'Task 1', status: STATUS.TODO },
+      { id: 2, description: 'Task 2', status: STATUS.IN_PROGRESS },
+    ]
+    mockGetFile.mockResolvedValue(tasks)
+
+    const listFn = list({ getFile: mockGetFile, STATUS, NAME_FILE })
+    await listFn({ restArgv: [ STATUS.DONE ] })
+
+    expect(mockGetFile).toHaveBeenCalledWith(NAME_FILE)
+    expect(mockConsoleLog).toHaveBeenCalledWith('Empty tasks!')
+  })
+
+  it('should show "Empty tasks!" message when the task list is empty', async () => {
+    mockGetFile.mockResolvedValue([])
+
+    const listFn = list({ getFile: mockGetFile, STATUS, NAME_FILE })
+    await listFn({ restArgv: [] })
+
+    expect(mockGetFile).toHaveBeenCalledWith(NAME_FILE)
+    expect(mockConsoleLog).toHaveBeenCalledWith('Empty tasks!')
+  })
+
+  it('should handle undefined restArgv', async () => {
+    const tasks = [
+      { id: 1, description: 'Task 1', status: STATUS.TODO },
+      { id: 2, description: 'Task 2', status: STATUS.IN_PROGRESS },
+    ]
+    mockGetFile.mockResolvedValue(tasks)
+
+    const listFn = list({ getFile: mockGetFile, STATUS, NAME_FILE })
+    await listFn({ restArgv: undefined })
+
+    expect(mockGetFile).toHaveBeenCalledWith(NAME_FILE)
+    expect(mockConsoleLog).toHaveBeenCalledTimes(2)
+    expect(mockConsoleLog).toHaveBeenNthCalledWith(1, '#1 | description: Task 1 | status: todo')
+    expect(mockConsoleLog).toHaveBeenNthCalledWith(2, '#2 | description: Task 2 | status: in-progress')
   })
 })

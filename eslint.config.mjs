@@ -22,7 +22,8 @@ export default [
       'no-console': 'off',
       'comma-dangle': ['error', 'always-multiline'],
       'object-curly-spacing': ['error', 'always'],
-      'array-bracket-spacing': ["error", "always"]
+      'array-bracket-spacing': ["error", "always"],
+      'quote-props': ['error', 'consistent-as-needed']
     }
   },
 ]

@@ -1,13 +1,16 @@
 import { add } from '../../actions/add.js'
+import { STATUS, NAME_FILE } from '../../constants.js'
 
 describe('add', () => {
   test('create new task in todo.json file', async () => {
+    const consoleLog = jest.spyOn(console, 'log')
     const getFile = jest.fn().mockReturnValueOnce([])
     const updateFile = jest.fn()
     const createTask = add({
       getFile,
       updateFile,
-      STATUS: { TODO: 'todo' },
+      STATUS,
+      NAME_FILE,
     })
 
     await createTask({ restArgv: [ 'text mock' ] })
@@ -22,6 +25,7 @@ describe('add', () => {
         }),
       ]),
     )
+    expect(consoleLog).toHaveBeenCalledWith('Task added successfully (ID: 1)')
   })
 
   test('create task without description print message that it is requested', async () => {
@@ -31,7 +35,8 @@ describe('add', () => {
     const createTask = add({
       getFile,
       updateFile,
-      STATUS: { TODO: 'todo' },
+      STATUS,
+      NAME_FILE,
     })
 
     await createTask({ restArgv: [] })

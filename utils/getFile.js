@@ -1,19 +1,18 @@
 import { updateFile } from './updateFile.js'
-import { readFile } from 'node:fs'
+import { readFileSync } from 'node:fs'
 
-export const getFile = (file) => new Promise(
-  (resolve, reject) => readFile(file, (err, data) => {
-    if (err) {
-      if (err.code === 'ENOENT') {
-        return updateFile(file, '[]')
-          .then(() => getFile(file))
-          .then(resolve)
-          .catch(reject)
-      }
+export const getFile = async (file) => {
+  try {
+    const data = await readFileSync(file)
 
-      reject(err)
+    return JSON.parse(data)
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      await updateFile(file, [])
+
+      return getFile(file)
     }
 
-    resolve(JSON.parse(data))
-  }),
-)
+    throw new Error('Error al leer el archivo')
+  }
+}
